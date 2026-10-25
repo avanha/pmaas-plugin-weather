@@ -1,0 +1,152 @@
+{
+ "@context": [
+  "https://geojson.org/geojson-ld/geojson-context.jsonld",
+  {
+   "@version": "1.1",
+   "wx": "https://api.weather.gov/ontology#",
+   "@vocab": "https://api.weather.gov/ontology#"
+  }
+ ],
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2e455760dca932df20b2dedef73d6161075ab4a9.001.1",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.2e455760dca932df20b2dedef73d6161075ab4a9.001.1",
+    "@type": "wx:Alert",
+    "id": "urn:oid:2.49.0.1.840.0.2e455760dca932df20b2dedef73d6161075ab4a9.001.1",
+    "areaDesc": "Rio Grande, CO",
+    "sent": "2026-10-25T16:43:00-06:00",
+    "effective": "2026-10-25T16:43:00-06:00",
+    "onset": "2026-10-25T16:43:00-06:00",
+    "expires": "2026-10-25T19:30:00-06:00",
+    "ends": "2026-10-25T19:30:00-06:00",
+    "status": "Actual",
+    "messageType": "Update",
+    "category": "Met",
+    "severity": "Severe",
+    "certainty": "Likely",
+    "urgency": "Immediate",
+    "event": "Flood Warning",
+    "sender": "w-nws.webmaster@noaa.gov",
+    "senderName": "NWS Pueblo CO",
+    "headline": "Flood Warning issued October 25 at 4:43PM MDT until October 25 at 7:30PM MDT by NWS Pueblo CO",
+    "description": "* WHAT...Flooding continues, especially along the Rio Grande and area\nwaterways downstream from Monte Vista.\n\n* WHERE...Southeastern Rio Grande County and West Central Alamosa\nCounty...\n\n* WHEN...Until 730 PM MDT.\n\n* IMPACTS...Flooding of rivers, creeks, streams, and other low-lying\nand flood-prone locations continues. Expect many areas of slow\nmoving or standing water.\n\n* ADDITIONAL DETAILS...\n- ",
+    "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.",
+    "response": "Avoid",
+    "note": null,
+    "parameters": {
+     "AWIPSidentifier": [
+      "FLSPUB"
+     ],
+     "WMOidentifier": [
+      "WGUS85 KPUB 252243"
+     ],
+     "NWSheadline": [
+      "FLOOD WARNING REMAINS IN EFFECT UNTIL 730 PM MDT THIS EVENING"
+     ],
+     "BLOCKCHANNEL": [
+      "EAS",
+      "NWEM",
+      "CMAS"
+     ],
+     "EAS-ORG": [
+      "WXR"
+     ],
+     "VTEC": [
+      "/O.CON.KPUB.FA.W.0017.000000T0000Z-261026T0130Z/"
+     ],
+     "eventEndingTime": [
+      "2026-10-25T19:30:00-06:00"
+     ]
+    },
+    "scope": "Public",
+    "code": "IPAWSv1.0",
+    "language": "en-US",
+    "web": "http://www.weather.gov",
+    "eventCode": {
+     "SAME": [
+      "FLS"
+     ],
+     "NationalWeatherService": [
+      "FAW"
+     ]
+    }
+   }
+  },
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ba3cd598b385a8d76e810b87b23252df74845de5.001.1",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "@id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.ba3cd598b385a8d76e810b87b23252df74845de5.001.1",
+    "@type": "wx:Alert",
+    "id": "urn:oid:2.49.0.1.840.0.ba3cd598b385a8d76e810b87b23252df74845de5.001.1",
+    "areaDesc": "Conejos, CO",
+    "sent": "2026-10-25T16:01:00-06:00",
+    "effective": "2026-10-25T16:01:00-06:00",
+    "onset": "2026-10-25T16:01:00-06:00",
+    "expires": "2026-10-25T19:15:00-06:00",
+    "ends": "2026-10-25T19:15:00-06:00",
+    "status": "Actual",
+    "messageType": "Update",
+    "category": "Met",
+    "severity": "Severe",
+    "certainty": "Likely",
+    "urgency": "Expected",
+    "event": "Flood Warning",
+    "sender": "w-nws.webmaster@noaa.gov",
+    "senderName": "NWS Pueblo CO",
+    "headline": "Flood Warning issued October 25 at 4:01PM MDT until October 25 at 7:15PM MDT by NWS Pueblo CO",
+    "description": "* WHAT...Flooding continues, especially along the Conejos River\n\n* WHERE...Southeastern Conejos County in south central Colorado...\n\n* WHEN...Until 715 PM MDT.\n\n* IMPACTS...Flooding will continue across low-lying and flood-prone\nlocations, especially along and near the Conejos River.\n\n* ADDITIONAL DETAILS...\n- At 356 PM MDT, River gauge reports indicate elevated river levels\ncontinue due to multip",
+    "instruction": "Turn around, don't drown when encountering flooded roads. Most flood\ndeaths occur in vehicles.\n\nBe aware of your surroundings and do not drive on flooded roads.",
+    "response": "Avoid",
+    "note": null,
+    "parameters": {
+     "AWIPSidentifier": [
+      "FLWPUB"
+     ],
+     "WMOidentifier": [
+      "WGUS45 KPUB 252201"
+     ],
+     "NWSheadline": [
+      "FLOOD WARNING NOW IN EFFECT UNTIL 715 PM MDT THIS EVENING"
+     ],
+     "BLOCKCHANNEL": [
+      "EAS",
+      "NWEM",
+      "CMAS"
+     ],
+     "EAS-ORG": [
+      "WXR"
+     ],
+     "VTEC": [
+      "/O.EXT.KPUB.FA.W.0015.000000T0000Z-261026T0115Z/"
+     ],
+     "eventEndingTime": [
+      "2026-10-25T19:15:00-06:00"
+     ],
+     "expiredReferences": [
+      "w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.d072dd1261b04ed50f03b7e3576f5b8a09109a13.001.1,2026-10-25T13:01:00-06:00 w-nws.webmaster@noaa.gov,urn:oid:2.49.0.1.840.0.8f32c4bed67af1e9c0aac89ba47a4cc8cec84fe2.001.1,2026-10-25T01:19:00-06:00"
+     ]
+    },
+    "scope": "Public",
+    "code": "IPAWSv1.0",
+    "language": "en-US",
+    "web": "http://www.weather.gov",
+    "eventCode": {
+     "SAME": [
+      "FLW"
+     ],
+     "NationalWeatherService": [
+      "FAW"
+     ]
+    }
+   }
+  }
+ ],
+ "title": "Current watches, warnings, and advisories for Colorado",
+ "updated": "2026-10-25T23:30:00+00:00"
+}

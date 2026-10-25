@@ -1,0 +1,39 @@
+<div class="entity-weather{{if .Stale}} stale{{end}}">
+    <div class="weather-header">
+        <span class="weather-name">{{.Name | html}}</span>
+        {{if .Place}}<span class="weather-place">{{.Place | html}}</span>{{end}}
+        {{if not .AsOf.IsZero}}<span class="weather-asof" title="When the forecast was last got">as of {{Clock .AsOf}}{{if .Stale}} (old){{end}}</span>{{end}}
+    </div>
+    {{if .Problem}}
+        <div class="weather-problem">{{.Problem | html}}</div>
+    {{end}}
+    {{range .Alerts}}
+        <div class="weather-alert {{.Class | html}}">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span class="alert-event">{{.Event | html}}</span>
+            {{if .When}}<span class="alert-when">{{.When | html}}</span>{{end}}
+        </div>
+    {{end}}
+    {{if .Now}}
+        <div class="weather-now">
+            <i class="bi bi-{{.Now.Icon | html}}"></i>
+            <span class="now-temperature">{{.Now.Temperature}}&deg;{{.Now.Unit | html}}</span>
+            <span class="now-short">{{.Now.Short | html}}</span>
+        </div>
+    {{end}}
+    {{if .Days}}
+        <div class="weather-days">
+            {{range .Days}}
+                <div class="weather-day">
+                    <div class="day-name">{{.Label | html}}</div>
+                    <div class="day-icon" title="{{.Short | html}}"><i class="bi bi-{{.Icon | html}}"></i></div>
+                    <div class="day-high">{{if .HasHigh}}{{.High}}&deg;{{else}}&ndash;{{end}}</div>
+                    <div class="day-low">{{if .HasLow}}{{.Low}}&deg;{{else}}&ndash;{{end}}</div>
+                    <div class="day-precip">{{if ge .Precip 10}}<i class="bi bi-droplet"></i>{{.Precip}}%{{else}}&nbsp;{{end}}</div>
+                </div>
+            {{end}}
+        </div>
+    {{else if not .Problem}}
+        <div class="weather-waiting">Waiting for the forecast&hellip;</div>
+    {{end}}
+</div>
