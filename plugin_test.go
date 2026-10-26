@@ -262,7 +262,20 @@ func newHarness(t *testing.T, configure func(c PluginConfig)) *harness {
 func (h *harness) stop() {
 	h.t.Helper()
 
-	(<-h.plugin.Stop())()
+	var callbacks chan func()
+
+	_ = h.container.EnqueueOnPluginGoRoutine(func() { callbacks = h.plugin.Stop() })
+
+	f := <-callbacks
+
+	_ = h.container.EnqueueOnPluginGoRoutine(f)
+}
+
+// start starts the plugin on what stands for its goroutine.
+func (h *harness) start() {
+	h.t.Helper()
+
+	_ = h.container.EnqueueOnPluginGoRoutine(h.plugin.Start)
 }
 
 func TestConfig_PlacesAreCheckedAndOfferedAsHandles(t *testing.T) {
@@ -492,7 +505,7 @@ func TestStart_RegistersAnEntityWithACardInTheWeatherKindAndGivesTheHandleItsId(
 		var handle *LocationHandle
 
 		h := newHarness(t, func(c PluginConfig) { handle = c.AddLocation("Big Horn", 44.6, -107.4) })
-		h.plugin.Start()
+		h.start()
 
 		id, ok := handle.RegisteredId()
 		if !ok || id != "weather_location/big-horn" || h.container.entities[id] != "Big Horn" {
@@ -508,8 +521,7 @@ func TestStart_RegistersAnEntityWithACardInTheWeatherKindAndGivesTheHandleItsId(
 			t.Errorf("%#v", view.Value)
 		}
 
-		callbacks := h.plugin.Stop()
-		(<-callbacks)()
+		h.stop()
 
 		if _, ok := handle.RegisteredId(); ok || len(h.container.deregister) != 1 {
 			t.Errorf("still registered: %v", h.container.deregister)
@@ -520,7 +532,7 @@ func TestStart_RegistersAnEntityWithACardInTheWeatherKindAndGivesTheHandleItsId(
 func TestWork_AsksForTheAlertsAndTheForecastAtTheirOwnIntervalsAndNotModifiedIsFine(t *testing.T) {
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddLocation("Home", 39.9967, -105.0944) })
-		h.plugin.Start()
+		h.start()
 
 		start := time.Now()
 
@@ -563,7 +575,7 @@ func TestWork_AsksForTheAlertsAndTheForecastAtTheirOwnIntervalsAndNotModifiedIsF
 func TestWork_AFailureIsRetriedSoonerAndLongerAndLongerAndTheOldForecastStays(t *testing.T) {
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddLocation("Home", 1, 1) })
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Second)
 		synctest.Wait()
@@ -616,7 +628,7 @@ func TestWork_AFailureIsRetriedSoonerAndLongerAndLongerAndTheOldForecastStays(t 
 func TestWork_AZipIsLookedUpFirstAndAPlaceTheServiceDoesNotKnowIsSaidOnTheCardAndLeftAlone(t *testing.T) {
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddZip("Office", "80026") })
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Second)
 		synctest.Wait()
@@ -631,7 +643,7 @@ func TestWork_AZipIsLookedUpFirstAndAPlaceTheServiceDoesNotKnowIsSaidOnTheCardAn
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddZip("Nowhere", "99999") })
 		h.geo.err = zip.ErrUnknown
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Hour)
 		synctest.Wait()
@@ -648,7 +660,7 @@ func TestWork_AZipIsLookedUpFirstAndAPlaceTheServiceDoesNotKnowIsSaidOnTheCardAn
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddLocation("London", 51.5, -0.12) })
 		h.source.pointErr = nws.ErrUnsupportedLocation
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Hour)
 		synctest.Wait()
@@ -665,7 +677,7 @@ func TestWork_ASetupThatFailsForNowIsTriedAgain(t *testing.T) {
 	synctest.Test(t, func(t *testing.T) {
 		h := newHarness(t, func(c PluginConfig) { c.AddLocation("Home", 1, 1) })
 		h.source.pointErr = &nws.HTTPError{Status: 503, Body: "busy"}
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Minute)
 		synctest.Wait()
@@ -696,7 +708,7 @@ func TestStart_WithoutAUserAgentAsksForNothingAndSaysSo(t *testing.T) {
 			c.UserAgent = "  "
 		})
 		h.plugin.config.UserAgent = "  "
-		h.plugin.Start()
+		h.start()
 
 		time.Sleep(time.Hour)
 		synctest.Wait()
