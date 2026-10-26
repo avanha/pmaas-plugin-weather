@@ -38,6 +38,24 @@ which is chimed on every open page, for what means get somewhere safe now: Torna
 Hurricane, Storm Surge, Tsunami, Blizzard, Ice Storm, Dust Storm and Avalanche Warnings, and a few others, and anything the service itself
 rates Extreme. The other warnings and the watches are **warnings**, and the advisories and statements are **info**.
 
+## A forecast freeze
+
+The service only issues frost and freeze alerts in the growing season of a place, so a night at 25°F after it is over (when pipes are in the
+most danger) gets none. A place can have an alert of the plugin's own, from the forecast:
+
+```go
+cougar := conf.AddZip("Cougar", "80026").AlertOnFreeze(weather.FreezeAlert{Note: "sprinkler pipes"})
+```
+
+It is raised, from the same source (`weather`), with the key `weather/<place>/freeze-forecast`, when the date at the place is in the season
+and the lowest temperature of the forecast for the next 24 hours is at or below the limit, and it is on the card of the place as well. The
+zero `FreezeAlert` is a low of **30°F** or less, from **September 1 to November 15**, looked for in the next **24 hours**, as a **warning**:
+`Below`, `From`, `To`, `Within`, `Severity` and `Note` change them. A season may go over the new year (`From` November 15, `To` March 1).
+
+The forecast gives one low for a night, so a night that begins within the next 24 hours counts, whole. Once raised, the alert is left alone
+until the forecast low is more than 2°F above the limit (so that a forecast that wavers around it does not raise and clear it over and over),
+or the season is over, and it is said again only if the low is two degrees or more different, or is another night.
+
 ## Settings
 
 | | default |

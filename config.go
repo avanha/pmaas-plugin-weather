@@ -46,6 +46,9 @@ type locationConfig struct {
 	longitude float64
 	zip       string
 	handle    *LocationHandle
+
+	// freeze is the place's alert on a forecast freeze, if the assembly asked for one.
+	freeze *FreezeAlert
 }
 
 // NewPluginConfig is a configuration with no places in it.
@@ -93,7 +96,7 @@ func (c PluginConfig) add(location *locationConfig) *LocationHandle {
 		}
 	}
 
-	location.handle = &LocationHandle{name: location.name}
+	location.handle = &LocationHandle{name: location.name, config: location}
 	*c.locations = append(*c.locations, location)
 
 	return location.handle
@@ -102,11 +105,22 @@ func (c PluginConfig) add(location *locationConfig) *LocationHandle {
 // LocationHandle is the assembly's handle on a place: its entity, once the plugin has registered it.
 type LocationHandle struct {
 	name     string
+	config   *locationConfig
 	entityId atomic.Pointer[string]
 }
 
 // A handle is an entity.Ref, so that the assembly can put the place's card in a group.
 var _ entity.Ref = (*LocationHandle)(nil)
+
+// AlertOnFreeze has the plugin raise its own alert, in the alert console, when the forecast for this place has a low at or below a limit
+// in the next day, during a season of the year (see FreezeAlert; the zero value is a low of 30°F or less, September 1 to November 15). It
+// returns the handle, so that it chains: conf.AddZip("Cougar", "80026").AlertOnFreeze(weather.FreezeAlert{Note: "sprinkler pipes"}).
+func (h *LocationHandle) AlertOnFreeze(options FreezeAlert) *LocationHandle {
+	defaults := options.withDefaults()
+	h.config.freeze = &defaults
+
+	return h
+}
 
 // Name is the place's name.
 func (h *LocationHandle) Name() string {

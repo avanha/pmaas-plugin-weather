@@ -4,6 +4,7 @@ package weather
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"reflect"
 	"strings"
@@ -71,6 +72,9 @@ type location struct {
 
 	// raised are the keys of the alerts raised in the console, with the message of each.
 	raised map[string]string
+
+	// freeze is what the freeze alert, if the place has one, has said.
+	freeze freezeState
 }
 
 type plugin struct {
@@ -291,6 +295,13 @@ func (p *plugin) viewOf(l *location) *data.LocationView {
 		view.Stale = !l.forecastAt.IsZero() && now.Sub(l.forecastAt) > staleAfter*p.config.ForecastEvery
 	}
 
+	if l.freeze.raised {
+		view.Alerts = append(view.Alerts, data.AlertView{
+			Event: fmt.Sprintf("Freeze forecast: %d°F %s", l.freeze.low, strings.ToLower(l.freeze.period)),
+			Class: severityClass(l.config.freeze.Severity),
+		})
+	}
+
 	for _, s := range shown(l.alerts, p.config.AlertSeverity) {
 		view.Alerts = append(view.Alerts, data.AlertView{
 			Event: s.alert.Event,
@@ -333,6 +344,44 @@ func (p *plugin) onForecast(l *location, forecast data.Forecast, notModified boo
 
 	if !notModified {
 		l.forecast = &forecast
+	}
+
+	p.checkFreeze(l)
+}
+
+// freezeKey is the key of a place's own alert in the console.
+func freezeKey(l *location) string {
+	return alertKey(l.id, "freeze forecast")
+}
+
+// checkFreeze raises or clears the place's own alert on a forecast freeze, from the forecast it has now. Runs on the plugin's goroutine.
+func (p *plugin) checkFreeze(l *location) {
+	options := l.config.freeze
+	if options == nil || l.forecast == nil {
+		return
+	}
+
+	decision := decideFreeze(*options, l.forecast.Periods, p.now(), l.freeze)
+
+	switch {
+	case decision.raise:
+		title := l.config.name + ": freeze forecast"
+
+		if err := alert.Raise(p.container, p.ShortName(), freezeKey(l), options.Severity, title, decision.text); err != nil {
+			p.log.Error("unable to raise the freeze alert", "name", l.config.name, "error", err)
+
+			return
+		}
+
+		l.freeze = freezeState{raised: true, low: decision.low, period: decision.period}
+	case decision.clear:
+		if err := alert.Clear(p.container, p.ShortName(), freezeKey(l)); err != nil {
+			p.log.Error("unable to clear the freeze alert", "name", l.config.name, "error", err)
+
+			return
+		}
+
+		l.freeze = freezeState{}
 	}
 }
 
